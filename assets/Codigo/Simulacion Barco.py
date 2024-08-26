@@ -13,20 +13,31 @@ AZUL = (0, 0, 255)
 
 # Dimensiones de la pantalla
 ANCHO = 1000
-ALTO = 800
+ALTO = 750
 
 # Pantalla
 pantalla = pygame.display.set_mode((ANCHO, ALTO))
 pygame.display.set_caption("Simulación Barco")
-fuente = pygame.font.Font(None, 60)
-fuente2 = pygame.font.Font(None, 30)
-fuente3 = pygame.font.Font(None, 20)
+
 
 # Cargar imágenes
+energia = pygame.image.load("Energia 1.png")
 barco = pygame.image.load('Barquiño.png')  
-Pato = pygame.image.load('Patito_de_Barrio.png')  
 Fondo_de_Pantalla = pygame.image.load('Oceano2.png') 
 Imagen_Bandera = pygame.image.load('Bandera.png') 
+Energia = [
+    pygame.image.load("Energia 1.png"),
+    pygame.image.load("Energia 2.png"),
+    pygame.image.load("Energia 3.png"),
+    pygame.image.load("Energia 4.png"),
+    pygame.image.load("Energia descargada.png"),
+]
+Pato = [
+    pygame.image.load("Patito_de_Barrio.png"),
+    pygame.image.load("Pato feli.png"),
+    pygame.image.load("Patito_de_Barrio.png"),
+    pygame.image.load("Pato feli.png")
+]
 # Posición inicial del barco
 x = ANCHO // 2
 y = ALTO // 2
@@ -45,19 +56,21 @@ NUM_CUADRADOS = 10
 
 # Variable para almacenar la posición del clic
 Bandera = None
-
+#Coordenadas
+Coor1=150
+Coor2=350
 CUADRADO_TAM = 50
 #Texto en si
-text = "Pulsa espacio para jugar"
-mensaje = fuente.render(text, 1, (BLANCO))
-pantalla.blit(mensaje, (100, 200))
-Version = "V.1.O.Beta"
-Version2 = fuente3.render(Version, 1, (255,255,255))
-pantalla.blit(Version2, (1060, 630))
-texto = "Fin del juego ganaste"
-Fin_del_game_papa = fuente.render(texto, 1, (BLANCO))
-
-# Dibujar Patos
+font = pygame.font.Font("Retro Gaming.ttf", 36)
+text = "Clik para donde quieres que valla"
+# Establecer la velocidad de la animación en segundos por frame
+velocidad1 = 1
+velocidad2 = 1
+# Variables para controlar la animación
+indic = 0
+indice = 0
+tiempo_transcurrido2= 0
+tiempo_transcurrido1= 0
 for _ in range(NUM_CUADRADOS):
     cuadrado_x = random.randint(0, ANCHO - CUADRADO_TAM)
     cuadrado_y = random.randint(0, ALTO - CUADRADO_TAM)
@@ -73,6 +86,8 @@ while not terminado:
             destino_x, destino_y = evento.pos
             en_movimiento = True
             Bandera = evento.pos
+            Coor1 = 3000
+            Coor2= 3000
     # Lógica del Barquiño mani
     if en_movimiento:
         # distancia del barco
@@ -109,18 +124,42 @@ while not terminado:
 
     # Limpiar pantalla
     pantalla.blit(Fondo_de_Pantalla,[0,0])
-
+    
+    
+    # Incrementar el tiempo transcurrido
+    tiempo_transcurrido1 += 1 / 60
+    tiempo_transcurrido2 += 1 / 60
+    # Cambiar de sprite según la velocidad Enrgia
+    if tiempo_transcurrido1 >= velocidad1:
+        tiempo_transcurrido1 = 0
+        indic += 1
+        if indic >= len(Energia):
+            indic = 0
+    # Cambiar de sprite según la velocidad Pato
+    
+    if tiempo_transcurrido2 >= velocidad1:
+        tiempo_transcurrido2 = 0
+        indice += 1
+        if indice >= len(Pato):
+            indice = 0
+    
+    
     
     for cuadrado in cuadrados:
-        pantalla.blit(Pato, cuadrado)
+        pantalla.blit(Pato[indice],cuadrado)
     
     # Dibujar la forma en la posición del clic
     if Bandera:
         pantalla.blit(Imagen_Bandera, Bandera)
-        
+    #Dibujar Energia 
+    pantalla.blit(Energia[indic],(0,0))
+    # Dibujar el texto en la ventana
+    text_surface = font.render(text, True, (255, 255, 255))
+    pantalla.blit(text_surface, (Coor1, Coor2))    
     # Dibujar el barco
     pantalla.blit(barco, (x, y))
-
+    #Dibujar energia
+    #pantalla.blit(energia, (0, 0))    
     # Actualizar pantalla
     pygame.display.flip()
 
